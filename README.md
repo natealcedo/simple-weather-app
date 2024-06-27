@@ -35,7 +35,9 @@ This section details the requests and responses for each API in use.
 
 ### /now
 HTTP Method - GET
-URL - https://birdsofaweather.netlify.app/api/weather/now 
+
+URL - https://birdsofaweather.netlify.app/api/weather/now
+
 Response format - `{ items: WeatherData[] }`
 
 Example response: 
