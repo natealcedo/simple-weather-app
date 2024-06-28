@@ -1,11 +1,15 @@
+import { Suspense } from "react";
 import Link from "next/link";
 
-import Button from "@/components/button";
-import Card from "@/components/card";
+import { WeatherNow } from "@/app/now/weather-now";
+import { Button } from "@/components/button";
+import { WeatherCardSkeleton } from "@/components/weather-card-skeleton";
 
 export interface WeatherData {
-  area: string;
-  forecast: string;
+  items: {
+    area: string;
+    forecast: string;
+  }[];
 }
 
 export default function Page() {
@@ -20,12 +24,12 @@ export default function Page() {
           </div>
           <div className="flex min-h-screen flex-col items-center justify-center">
             <h1 className="pb-24 text-center text-6xl font-bold text-gray-700">
-              What's it like outside?
+              What&apos;s it like outside?
             </h1>
             <div className="flex w-[60%] flex-row gap-4">
-              {
-                // weatherData.map(data => <Card weatherData={data} additionalClassNames="flex-1" />)
-              }
+              <Suspense fallback={<WeatherCardSkeleton />}>
+                <WeatherNow />
+              </Suspense>
             </div>
           </div>
         </div>
