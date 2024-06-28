@@ -3,11 +3,11 @@ import React from "react";
 import { WeatherData } from "@/app/now/page";
 
 interface CardProps {
-  weatherData: WeatherData;
+  weatherData: WeatherData["items"][number];
   additionalClassNames?: string;
 }
 
-export function Card(props: CardProps) {
+export function WeatherCardNow(props: CardProps) {
   return (
     <div
       className={`max-w-sm overflow-hidden rounded-lg bg-gray-300 opacity-80 shadow-md ${props.additionalClassNames}`}
