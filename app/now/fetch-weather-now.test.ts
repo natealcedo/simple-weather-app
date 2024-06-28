@@ -24,10 +24,11 @@ describe("fetchWeatherNow", () => {
   });
 
   it("returns an empty items array when the fetch is not successful", async () => {
-    fetchMock.mockRejectOnce(new Error("Fetch failed"));
+    const mockData = { items: [{ temperature: 20, condition: "Sunny" }] };
+    fetchMock.mockRejectOnce(new Error("Fetch failed")).mockResponseOnce(JSON.stringify(mockData));
 
     const result = await fetchWeatherNow();
-    expect(result).toEqual({ items: [] });
+    expect(result).toEqual(mockData);
     expect(fetch).toHaveBeenCalledTimes(2);
     expect(fetch).toHaveBeenCalledWith("https://birdsofaweather.netlify.app/api/weather/now", {
       next: {
@@ -46,6 +47,25 @@ describe("fetchWeatherNow", () => {
     const result = await fetchWeatherNow();
     expect(result).toEqual(mockData);
     expect(fetch).toHaveBeenCalledTimes(3);
+    expect(fetch).toHaveBeenCalledWith("https://birdsofaweather.netlify.app/api/weather/now", {
+      next: {
+        revalidate: 60,
+      },
+    });
+  });
+
+  it("retries and returns an empty array after failing 5 times", async () => {
+    const mockData = { items: [] };
+    fetchMock
+      .mockRejectOnce(new Error("Fetch failed"))
+      .mockRejectOnce(new Error("Fetch failed"))
+      .mockRejectOnce(new Error("Fetch failed"))
+      .mockRejectOnce(new Error("Fetch failed"))
+      .mockRejectOnce(new Error("Fetch failed"));
+
+    const result = await fetchWeatherNow();
+    expect(result).toEqual(mockData);
+    expect(fetch).toHaveBeenCalledTimes(6);
     expect(fetch).toHaveBeenCalledWith("https://birdsofaweather.netlify.app/api/weather/now", {
       next: {
         revalidate: 60,
