@@ -28,7 +28,24 @@ describe("fetchWeatherNow", () => {
 
     const result = await fetchWeatherNow();
     expect(result).toEqual({ items: [] });
-    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(fetch).toHaveBeenCalledTimes(2);
+    expect(fetch).toHaveBeenCalledWith("https://birdsofaweather.netlify.app/api/weather/now", {
+      next: {
+        revalidate: 60,
+      },
+    });
+  });
+
+  it("retries the fetch when it fails", async () => {
+    const mockData = { items: [{ temperature: 20, condition: "Sunny" }] };
+    fetchMock
+      .mockRejectOnce(new Error("Fetch failed"))
+      .mockRejectOnce(new Error("Fetch failed"))
+      .mockResponseOnce(JSON.stringify(mockData));
+
+    const result = await fetchWeatherNow();
+    expect(result).toEqual(mockData);
+    expect(fetch).toHaveBeenCalledTimes(3);
     expect(fetch).toHaveBeenCalledWith("https://birdsofaweather.netlify.app/api/weather/now", {
       next: {
         revalidate: 60,
