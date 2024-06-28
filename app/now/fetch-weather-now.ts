@@ -28,7 +28,6 @@ export async function fetchWeatherNow(): Promise<WeatherData> {
       if (response.ok) {
         return response.json();
       }
-      return { items: [] };
     })
     .catch(() => {
       return {
